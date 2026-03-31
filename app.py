@@ -12,6 +12,9 @@ import plotly.graph_objects as go
 # ==========================================
 st.set_page_config(page_title="VALO AI Coach Pro", layout="wide", initial_sidebar_state="expanded")
 
+# ★追加: ブラウザの自動翻訳を強制的に無効化するお札（メタタグ）
+st.markdown('<meta name="google" content="notranslate">', unsafe_allow_html=True)
+
 # カスタムCSSでサイバー・ネオン感を演出
 st.markdown("""
     <style>
@@ -103,7 +106,8 @@ def safe_generate_content(contents_list):
             return response.text
         except Exception as e:
             err_msg = str(e)
-            if any(x in err_msg for x in ["429", "quota", "ResourceExhausted"]):
+            # ★修正: 503とUNAVAILABLEをエラー検知リストに追加
+            if any(x in err_msg for x in ["429", "quota", "ResourceExhausted", "503", "UNAVAILABLE"]):
                 placeholder.empty() 
                 with placeholder.container():
                     st.warning(f"現在AIモデルが混雑しています。リフレッシュするまで5分待機します... ({time.strftime('%H:%M:%S')})")
